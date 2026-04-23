@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<title>Registro Pro Ultra 3.1</title>
+<title>Registro Pro Ultra 3.2 Fix</title>
 <style>
 :root {
   --bg: #0a0a0c;
@@ -18,56 +18,15 @@
   --danger: #ff5252;
 }
 
+/* [REGLA DE ORO: SCROLL INVISIBLE Y FIJACIÓN] */
 * { scrollbar-width: none !important; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
-*::-webkit-scrollbar { display: none !important; }
+*::-webkit-scrollbar { display: none !important; width: 0 !important; }
 
 body {
   margin: 0; font-family: 'Segoe UI', Roboto, sans-serif;
   background: radial-gradient(circle at top right, #1a1a2e, #0a0a0c);
   color: var(--text); min-height: 100vh; overflow: hidden;
 }
-
-/* [NUEVA FUNCIÓN: ESTILOS_ADITIVOS] - INICIO */
-#pList, #fFields {
-  overflow-y: auto !important;
-  padding-right: 5px;
-  -webkit-overflow-scrolling: touch;
-}
-
-#pList { max-height: 250px; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px; }
-
-/* Estilización de scrollbars para visibilidad en escritorio */
-#pList::-webkit-scrollbar, #fFields::-webkit-scrollbar {
-  display: block !important;
-  width: 4px;
-}
-#pList::-webkit-scrollbar-thumb, #fFields::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 10px;
-}
-
-.img-preview {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 16px;
-  margin-bottom: 15px;
-  border: 1px solid var(--border);
-  display: none;
-}
-/* [NUEVA FUNCIÓN] - FIN */
-
-/* NOTIFICACIONES */
-#toast {
-  position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-150px);
-  padding: 16px 28px; border-radius: 20px; font-weight: bold; font-size: 14px;
-  z-index: 10000; transition: 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.8); text-align: center; min-width: 280px;
-}
-#toast.show { transform: translateX(-50%) translateY(0); }
-.t-success { background: var(--success); color: #fff; }
-.t-warning { background: var(--warning); color: #000; }
-.t-danger { background: var(--danger); color: #fff; }
 
 header {
   padding: 15px 20px; background: var(--glass); backdrop-filter: blur(15px);
@@ -85,7 +44,6 @@ main {
 }
 .card:active { transform: scale(0.96); background: var(--glass); }
 
-/* MODALES */
 .modal {
   position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(15px);
   display: none; align-items: center; justify-content: center; z-index: 2000;
@@ -94,19 +52,20 @@ main {
 .modalContent {
   background: var(--card); border: 1px solid var(--border); width: 92%; max-width: 420px;
   border-radius: 32px; height: 85vh; display: flex; flex-direction: column; overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 
 .m-header { padding: 20px; flex-shrink: 0; border-bottom: 1px solid var(--border); position: relative; }
 .m-footer { padding: 20px; flex-shrink: 0; border-top: 1px solid var(--border); display: flex; gap: 10px; }
-.m-scroll { flex: 1; overflow-y: auto; padding: 20px; -webkit-overflow-scrolling: touch; }
 
-/* FORMULARIO */
+.m-scroll { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+.t-panel { display: none; flex-direction: column; height: 100%; padding: 20px; overflow: hidden; }
+.static-header { flex-shrink: 0; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+.scroll-list { flex-grow: 1; overflow-y: auto; padding-right: 5px; }
+
 label { display: block; color: var(--primary); font-size: 11px; font-weight: 800; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
 input, select {
   width: 100%; padding: 16px; border-radius: 16px; border: 1px solid var(--border);
-  background: #252a34 !important; color: #ffffff !important; font-size: 16px; margin-bottom: 18px;
-  appearance: none; -webkit-appearance: none;
+  background: #252a34 !important; color: #ffffff !important; font-size: 16px; margin-bottom: 15px;
 }
 
 .action-btn {
@@ -116,33 +75,43 @@ input, select {
 
 .close-btn { position: absolute; top: 18px; right: 20px; background: #333; color: #fff; border: none; width: 34px; height: 34px; border-radius: 10px; font-size: 16px; z-index: 10; }
 
-/* TABS */
 .tabs { display: flex; gap: 10px; overflow-x: auto; margin-top: 12px; padding-bottom: 5px; }
 .t-btn { background: var(--glass); color: #999; border: 1px solid var(--border); padding: 10px 16px; border-radius: 12px; font-size: 12px; white-space: nowrap; }
 .t-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
 .list-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: rgba(255,255,255,0.03); border-radius: 14px; margin-bottom: 8px; border: 1px solid var(--border); }
 
-/* MODAL DE CONFIRMACIÓN PERSONALIZADO */
-#confirmModal { z-index: 3000; }
-.confirm-box { background: #1c222d; padding: 30px; border-radius: 25px; border: 1px solid var(--danger); text-align: center; width: 85%; max-width: 320px; }
+/* [NUEVA FUNCIÓN: SISTEMA_NOTIFICACIONES_V3] - INICIO */
+#toast-container {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+  z-index: 9999; width: 90%; max-width: 350px; pointer-events: none;
+}
+.toast {
+  background: rgba(28, 34, 45, 0.95); backdrop-filter: blur(10px);
+  border: 1px solid var(--border); padding: 16px 20px; border-radius: 20px;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: toastIn 0.3s ease-out forwards;
+}
+@keyframes toastIn { from { opacity:0; transform: translateY(-20px); } to { opacity:1; transform: translateY(0); } }
+.toast.success { border-left: 4px solid var(--success); }
+.toast.warning { border-left: 4px solid var(--warning); }
+.toast.danger { border-left: 4px solid var(--danger); }
+.toast-msg { font-size: 13px; font-weight: 600; color: #fff; }
+/* [NUEVA FUNCIÓN] - FIN */
+
+/* [NUEVA FUNCIÓN: MODAL_CONFIRM_STYLE] - INICIO */
+#confirmModal .modalContent { height: auto; max-width: 320px; padding: 30px; text-align: center; }
+.confirm-title { font-size: 18px; font-weight: 900; margin-bottom: 10px; color: var(--danger); }
+.confirm-text { font-size: 14px; color: #aaa; margin-bottom: 25px; line-height: 1.5; }
+/* [NUEVA FUNCIÓN] - FIN */
+
+.field-group { margin-bottom: 20px; }
+.camera-toggle { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 15px; font-size: 12px; color: #aaa; }
 </style>
 </head>
 <body>
 
-<div id="toast"></div>
-
-<div class="modal" id="confirmModal">
-  <div class="confirm-box">
-    <div style="font-size: 40px; margin-bottom: 15px;">⚠️</div>
-    <h3 style="margin: 0 0 10px 0;">¿Estás seguro?</h3>
-    <p id="confirmText" style="font-size: 14px; color: #aaa; margin-bottom: 25px;"></p>
-    <div style="display: flex; gap: 10px;">
-      <button class="action-btn" style="background:#333" onclick="closeConfirm(false)">Cancelar</button>
-      <button class="action-btn" style="background:var(--danger)" onclick="closeConfirm(true)">Eliminar</button>
-    </div>
-  </div>
-</div>
+<div id="toast-container"></div>
 
 <header>
   <span style="font-weight:900; letter-spacing:1px; color:var(--primary)">REGISTRO PRO</span>
@@ -165,45 +134,53 @@ input, select {
   </div>
 
   <div class="m-scroll">
-    <div id="t-win" class="t-panel">
-        <label>Nueva Ventana</label>
-        <input id="vN" placeholder="Ej: Reporte Diario">
-        <input id="vI" placeholder="Emoji (Ej: 📝)">
-        <button class="action-btn" onclick="addW()">Crear Sección</button>
-        
-        <div style="margin-top:40px; border-top:1px solid var(--border); padding-top:20px">
-          <label style="color:var(--danger)">Eliminar Sección</label>
-          <select id="vD"></select>
-          <button class="action-btn" style="background:var(--danger)" onclick="askDelete('window')">Eliminar Selección</button>
+    <div id="t-win" class="t-panel" style="display:flex">
+        <div class="scroll-list">
+            <label>Nueva Ventana</label>
+            <input id="vN" placeholder="Ej: Reporte Diario">
+            <input id="vI" placeholder="Emoji (Ej: 📝)">
+            <button class="action-btn" onclick="addW()">Crear Sección</button>
+            <div style="margin-top:40px; border-top:1px solid var(--border); padding-top:20px">
+              <label style="color:var(--danger)">Eliminar Sección</label>
+              <select id="vD"></select>
+              <button class="action-btn" style="background:var(--danger)" onclick="askDelete()">Eliminar Selección</button>
+            </div>
         </div>
     </div>
 
-    <div id="t-pre" class="t-panel" style="display:none">
-        <label>Nombre del Campo</label>
-        <input id="pN" placeholder="Ej: Nombre del Cliente">
-        <label>Tipo de Entrada</label>
-        <select id="pT">
-            <option value="text">Texto</option>
-            <option value="number">Número</option>
-            <option value="auto">Fecha y Hora Auto</option>
-            <option value="photo">Cámara / Foto</option>
-        </select>
-        <label>Opciones (Opcional)</label>
-        <input id="pO" placeholder="Ej: Si|No|Tal vez">
-        <button class="action-btn" onclick="addP()">Guardar Campo</button>
-        <div id="pList"></div>
+    <div id="t-pre" class="t-panel">
+        <div class="static-header">
+            <label>BIBLIOTECA DE CAMPOS</label>
+            <input id="pN" placeholder="Nombre del Campo">
+            <input id="pE" placeholder="Emoji (Ej: 📝)">
+            <select id="pT">
+                <option value="text">Texto</option>
+                <option value="number">Número</option>
+                <option value="auto">Fecha y Hora Auto</option>
+                <option value="photo">Cámara / Foto</option>
+            </select>
+            <input id="pO" placeholder="Opciones (Ej: Si|No)">
+            <div class="camera-toggle">
+                <input type="checkbox" id="pCam" style="width:20px; margin:0">
+                <span>Usar Cámara</span>
+            </div>
+            <button class="action-btn" style="background:var(--success)" onclick="addP()">Guardar Campo</button>
+        </div>
+        <div class="scroll-list" id="pList"></div>
     </div>
 
-    <div id="t-link" class="t-panel" style="display:none">
-        <label>1. Ventana</label>
-        <select id="lW" onchange="listF()"></select>
-        <label>2. Campo a Vincular</label>
-        <select id="lP"></select>
-        <button class="action-btn" onclick="link()">Vincular ✅</button>
-        <div id="fList" style="margin-top:20px"></div>
+    <div id="t-link" class="t-panel">
+        <div class="static-header">
+            <label>1. SELECCIONAR VENTANA</label>
+            <select id="lW" onchange="listF()"></select>
+            <label>2. CAMPO A VINCULAR</label>
+            <select id="lP"></select>
+            <button class="action-btn" onclick="link()">Vincular Campo ✅</button>
+        </div>
+        <div class="scroll-list" id="fList"></div>
     </div>
 
-    <div id="t-ws" class="t-panel" style="display:none">
+    <div id="t-ws" class="t-panel">
       <label>Número WhatsApp Destinatario</label>
       <input id="ws" placeholder="+573000000000">
     </div>
@@ -211,79 +188,53 @@ input, select {
 </div>
 </div>
 
-<div class="modal" id="formModal">
-<div class="modalContent">
-  <div class="m-header">
-    <button class="close-btn" onclick="closeForm()">✕</button>
-    <h3 id="fTitle" style="color:var(--primary); margin:0"></h3>
-  </div>
-  <div id="fFields" class="m-scroll"></div>
-  <div class="m-footer">
-    <button class="action-btn" onclick="send()" style="flex:2">📤 Enviar Datos</button>
-    <button class="action-btn" onclick="askDelete('clear')" style="flex:1; background:#2d3442">🧹</button>
+<div class="modal" id="regModal">
+  <div class="modalContent">
+    <div class="m-header">
+      <button class="close-btn" onclick="regModal.style.display='none'">✕</button>
+      <h3 id="regTitle" style="margin:0">Registro</h3>
+    </div>
+    <div class="m-scroll">
+      <div class="scroll-list" id="regFields" style="padding:20px"></div>
+    </div>
+    <div class="m-footer">
+      <button class="action-btn" style="background:var(--success)" onclick="sendWS()">ENVIAR DATOS</button>
+    </div>
   </div>
 </div>
+
+<div class="modal" id="confirmModal" style="z-index: 3000;">
+  <div class="modalContent">
+    <div class="confirm-title">¿ELIMINAR SECCIÓN?</div>
+    <div class="confirm-text">Esta acción borrará permanentemente la ventana seleccionada y todos sus vínculos.</div>
+    <div style="display:flex; gap:10px; width:100%">
+      <button class="action-btn" style="background:#333" onclick="confirmModal.style.display='none'">CANCELAR</button>
+      <button class="action-btn" style="background:var(--danger)" id="confirmDeleteBtn">ELIMINAR</button>
+    </div>
+  </div>
 </div>
 
 <script>
 let data = JSON.parse(localStorage.getItem("REG_ULTRA_V3")) || {windows:[], wsap:"", presets:[]};
-let cur = null;
-let confirmAction = null;
+const save = () => localStorage.setItem("REG_ULTRA_V3", JSON.stringify(data));
 
-const save = () => {
-    if(document.getElementById("ws")) data.wsap = document.getElementById("ws").value;
-    localStorage.setItem("REG_ULTRA_V3", JSON.stringify(data));
-};
-
-function notify(msg, type = "success") {
-  const t = document.getElementById("toast");
-  t.innerText = msg;
-  t.className = "t-" + type + " show";
-  setTimeout(() => t.classList.remove("show"), 2500);
-}
-
-// [NUEVA FUNCIÓN: IMAGE_HANDLER] - INICIO
-function handleImage(input, previewId) {
-  const file = input.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const preview = document.getElementById(previewId);
-      preview.src = e.target.result;
-      preview.style.display = 'block';
-      notify('Foto lista');
-    }
-    reader.readAsDataURL(file);
-  }
-}
-// [NUEVA FUNCIÓN] - FIN
-
-function askDelete(type) {
-  confirmAction = type;
-  const modal = document.getElementById("confirmModal");
-  const text = document.getElementById("confirmText");
-  text.innerText = type === 'window' ? "¿Deseas eliminar esta ventana?" : "¿Deseas borrar los datos escritos?";
-  modal.style.display = "flex";
-}
-
-function closeConfirm(verified) {
-  document.getElementById("confirmModal").style.display = "none";
-  if(!verified) return;
-
-  if(confirmAction === 'window') {
-    data.windows.splice(vD.value, 1);
-    save(); refresh(); render();
-    notify("Eliminado", "danger");
-  } else if(confirmAction === 'clear') {
-    document.querySelectorAll("#fFields input:not([disabled])").forEach(i => i.value = "");
-    notify("Limpio", "warning");
-  }
+// [NUEVA FUNCIÓN: NOTIFY_UI]
+function notify(msg, type = 'success', icon = '🔔') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span>${icon}</span><span class="toast-msg">${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
 }
 
 function tab(id, btn) {
   document.querySelectorAll('.t-panel').forEach(p => p.style.display = 'none');
   document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).style.display = 'block';
+  document.getElementById(id).style.display = 'flex';
   btn.classList.add('active');
   if(id === 't-link') listF();
 }
@@ -291,86 +242,101 @@ function tab(id, btn) {
 function refresh() {
   const opt = data.windows.map((w,i)=>`<option value="${i}">${w.icon} ${w.name}</option>`).join("");
   lW.innerHTML = opt; vD.innerHTML = opt;
-  lP.innerHTML = `<option value="">-- Elige un campo --</option>` + data.presets.map((p,i)=>`<option value="${i}">${p.name}</option>`).join("");
-  
-  pList.innerHTML = data.presets.map((p,i)=>`
-    <div class="list-item">
-        <div style="display:flex; flex-direction:column">
-            <span style="font-weight:bold">${p.name}</span>
-            <span style="font-size:10px; color:var(--primary)">${p.type.toUpperCase()}</span>
-        </div>
-        <button onclick="data.presets.splice(${i},1);save();refresh()" style="color:var(--danger); background:none; border:none; font-weight:bold">✕</button>
-    </div>`).join("");
+  lP.innerHTML = `<option value="">-- Elige campo --</option>` + data.presets.map((p,i)=>`<option value="${i}">${p.name}</option>`).join("");
+  pList.innerHTML = data.presets.map((p,i)=>`<div class="list-item"><span>${p.emoji||'🔹'} ${p.name}</span><button onclick="data.presets.splice(${i},1);save();refresh();notify('Campo eliminado','danger','🗑️')" style="color:var(--danger); background:none; border:none;">✕</button></div>`).join("");
 }
 
 function listF() {
-    const idx = lW.value;
-    if(!data.windows[idx]) return;
-    fList.innerHTML = data.windows[idx].fields.map((f, i) => `<div class="list-item"><span>${f.name}</span><button onclick="data.windows[${idx}].fields.splice(${i},1);save();listF()" style="color:var(--danger); background:none; border:none; font-size:10px">REMOVER</button></div>`).join("");
+    const idx = lW.value; if(!data.windows[idx]) return;
+    fList.innerHTML = data.windows[idx].fields.map((f, i) => `<div class="list-item"><span>${f.name}</span><button onclick="data.windows[${idx}].fields.splice(${i},1);save();listF();notify('Vínculo removido','warning','🔗')" style="color:var(--danger); background:none; border:none; font-size:10px">REMOVER</button></div>`).join("");
 }
 
 function addW(){
-  if(!vN.value) return notify("Ingresa nombre", "warning");
+  if(!vN.value) { notify('Falta nombre de ventana','warning','⚠️'); return; }
   data.windows.push({name:vN.value, icon:vI.value||'📁', fields:[]});
-  vN.value=""; vI.value=""; save(); refresh(); render(); notify("Ventana creada");
+  vN.value=""; vI.value=""; save(); refresh(); render();
+  notify('Ventana creada','success','✅');
 }
 
 function addP(){
-  if(!pN.value) return notify("Ingresa nombre", "warning");
-  data.presets.push({ name: pN.value, type: pT.value, opt: pO.value });
-  pN.value=""; pO.value=""; save(); refresh(); notify("Guardado");
+  if(!pN.value) { notify('Nombre de campo requerido','warning','⚠️'); return; }
+  data.presets.push({ name: pN.value, emoji: pE.value, type: pT.value, opt: pO.value, useCam: pCam.checked });
+  pN.value=""; pE.value=""; pO.value=""; pCam.checked = false;
+  save(); refresh();
+  notify('Campo guardado','success','💾');
 }
 
 function link(){
-  if(lW.value==="" || lP.value==="") return notify("Selecciona ventana y campo", "warning");
+  if(lW.value==="" || lP.value==="") { notify('Selecciona ventana y campo','warning','⚠️'); return; }
   data.windows[lW.value].fields.push({...data.presets[lP.value]});
-  save(); listF(); notify("Campo vinculado");
+  save(); listF();
+  notify('Campo vinculado','success','🔗');
 }
 
 function render(){
   main.innerHTML="";
   data.windows.forEach((w,i)=>{
     let d=document.createElement("div"); d.className="card";
-    d.innerHTML=`<div style="font-size:40px">${w.icon}</div><div style="margin-top:12px; font-weight:900; font-size:13px">${w.name.toUpperCase()}</div>`;
+    d.innerHTML=`<div style="font-size:40px">${w.icon}</div><div style="margin-top:12px; font-weight:900; font-size:11px">${w.name.toUpperCase()}</div>`;
     d.onclick=()=>openF(i); main.appendChild(d);
   });
 }
 
 function openConfig(){ ws.value=data.wsap||""; refresh(); configModal.style.display="flex"; }
-function closeConfig(){ data.wsap=ws.value; save(); configModal.style.display="none"; }
+function closeConfig(){ data.wsap=ws.value; save(); configModal.style.display="none"; notify('Configuración guardada','success','⚙️'); }
 
-function openF(i){
-  cur=i; let w=data.windows[i]; fTitle.innerText=w.icon+" "+w.name; fFields.innerHTML="";
-  
-  const now = new Date();
-  const timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+let currentWinIdx = null;
 
-  w.fields.forEach((f,idx)=>{
-    let d=document.createElement("div");
-    d.innerHTML=`<label>${f.name}</label>`;
-    if(f.type==="auto") d.innerHTML+=`<input data-i="${idx}" value="${timeStr}" disabled style="opacity:0.7; background:rgba(25,118,210,0.1) !important">`;
-    else if(f.type==="photo") {
-        const pId = `pv_${idx}`;
-        d.innerHTML+=`<img id="${pId}" class="img-preview"><button class="action-btn" style="background:#444; margin-bottom:15px" onclick="this.nextElementSibling.click()">📸 Cámara</button><input type="file" accept="image/*" capture="environment" style="display:none" onchange="handleImage(this, '${pId}')">`;
+function openF(idx) {
+  currentWinIdx = idx;
+  const win = data.windows[idx];
+  if(win.fields.length === 0) { notify('Esta ventana no tiene campos','warning','📂'); return; }
+  regTitle.innerText = `${win.icon} ${win.name}`;
+  regFields.innerHTML = "";
+  win.fields.forEach((f, i) => {
+    let html = `<div class="field-group"><label>${f.emoji || '🔹'} ${f.name}</label>`;
+    if(f.type === 'auto') {
+      const now = new Date().toLocaleString();
+      html += `<input type="text" class="reg-val" data-name="${f.name}" value="${now}" readonly>`;
+    } else if(f.opt) {
+      const options = f.opt.split("|");
+      html += `<select class="reg-val" data-name="${f.name}">` + options.map(o => `<option value="${o}">${o}</option>`).join("") + `</select>`;
+    } else if(f.type === 'number') {
+      html += `<input type="number" class="reg-val" data-name="${f.name}" placeholder="0.00">`;
+    } else {
+      html += `<input type="text" class="reg-val" data-name="${f.name}" placeholder="Escriba aquí...">`;
     }
-    else if(f.opt) d.innerHTML+=`<select data-i="${idx}">${f.opt.split("|").map(o=>`<option value="${o}">${o}</option>`).join("")}</select>`;
-    else d.innerHTML+=`<input data-i="${idx}" type="${f.type==='number'?'number':'text'}" placeholder="Escribir...">`;
-    fFields.appendChild(d);
+    html += `</div>`;
+    regFields.innerHTML += html;
   });
-  formModal.style.display="flex";
+  regModal.style.display = "flex";
 }
 
-function send(){
-  if(!data.wsap) return notify("Configura WhatsApp", "warning");
-  let w=data.windows[cur]; 
-  let msg=`*${w.icon} ${w.name.toUpperCase()}*\n─────────────────\n`;
-  document.querySelectorAll("#fFields [data-i]").forEach(e=>{ 
-    msg+=`• *${data.windows[cur].fields[e.dataset.i].name}:* ${e.value}\n`; 
+function sendWS() {
+  if(!data.wsap) { notify('Configura el WhatsApp','danger','🚫'); return; }
+  let msg = `*REPORT: ${data.windows[currentWinIdx].name.toUpperCase()}*\n`;
+  msg += `--------------------------\n`;
+  document.querySelectorAll('.reg-val').forEach(input => {
+    msg += `*${input.dataset.name}:* ${input.value}\n`;
   });
-  window.open(`https://wa.me/${data.wsap}?text=`+encodeURIComponent(msg));
+  const url = `https://wa.me/${data.wsap.replace('+', '')}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+  notify('Abriendo WhatsApp...','success','📲');
 }
 
-function closeForm(){ formModal.style.display="none"; }
+// [NUEVA FUNCIÓN: LOGICA_BORRADO_SEGURA]
+function askDelete() {
+  const idx = vD.value;
+  if(idx === "") return notify('Selecciona una sección','warning','⚠️');
+  confirmModal.style.display = 'flex';
+  confirmDeleteBtn.onclick = () => {
+    data.windows.splice(idx, 1);
+    save(); refresh(); render();
+    confirmModal.style.display = 'none';
+    notify('Sección eliminada','danger','🗑️');
+  };
+}
+
 window.onload = render;
 </script>
 </body>
