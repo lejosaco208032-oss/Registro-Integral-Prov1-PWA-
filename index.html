@@ -16,7 +16,7 @@
   --success: #00c853;
 }
 
-/* OCULTAR BARRAS DE DESPLAZAMIENTO EN TODA LA APP */
+/* ELIMINACIÓN TOTAL DE BARRAS DE DESPLAZAMIENTO */
 * { 
     scrollbar-width: none !important; 
     -ms-overflow-style: none !important; 
@@ -24,6 +24,8 @@
 }
 *::-webkit-scrollbar { 
     display: none !important; 
+    width: 0 !important; 
+    height: 0 !important; 
 }
 
 body{
@@ -46,6 +48,7 @@ body{
 @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 @keyframes load { to { width: 100%; } }
 
+/* TOAST / NOTIFICACIONES */
 #toast {
   position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-120px);
   background: rgba(28, 34, 45, 0.9); color: #fff; border: 1px solid var(--primary);
@@ -55,7 +58,7 @@ body{
 }
 #toast.show { transform: translateX(-50%) translateY(0); }
 
-/* CONFIRMACIÓN PERSONALIZADA */
+/* AVISO DE CONFIRMACIÓN PERSONALIZADO */
 #customConfirm {
   position: fixed; inset: 0; background: rgba(0,0,0,0.85);
   display: none; align-items: center; justify-content: center; z-index: 11000;
@@ -84,7 +87,6 @@ main{
   border-radius: 20px; padding: 20px; text-align: center; backdrop-filter: blur(10px);
 }
 
-/* MODALES Y CONTENEDORES DE SCROLL */
 .modal{
   position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter: blur(10px);
   display:none; align-items:center; justify-content:center; z-index: 2000;
@@ -94,7 +96,7 @@ main{
   border-radius: 30px; position: relative; height: 85vh; display: flex; flex-direction: column; overflow: hidden;
 }
 .modal-header { padding: 20px 20px 10px; flex-shrink: 0; }
-.tab-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; flex-shrink: 0; }
+.tab-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; }
 .tab-btn {
   background: rgba(255,255,255,0.05); color: #888; border: 1px solid var(--border); 
   padding: 8px 16px; border-radius: 12px; cursor: pointer; font-size: 12px; white-space: nowrap;
@@ -102,25 +104,24 @@ main{
 .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
 .tab-body { flex: 1; padding: 0 20px 20px; overflow: hidden; display: flex; flex-direction: column; }
-.tab-content { display: none; height: 100%; flex-direction: column; overflow: hidden; }
+.tab-content { display: none; height: 100%; flex-direction: column; overflow-y: auto; }
 .tab-content.active { display: flex; }
-
-/* ÁREAS DE SCROLL ESPECÍFICAS */
-.scroll-area { 
-  flex: 1; margin-top: 10px; background: rgba(0,0,0,0.15); 
-  border-radius: 18px; padding: 12px; overflow-y: auto; 
-  border: 1px solid var(--border);
-}
 
 input, select {
   width:100%; padding:12px 15px; border-radius:12px; border:1px solid var(--border);
   background: rgba(255, 255, 255, 0.07); color: #fff; margin-top: 8px; 
   box-sizing: border-box; font-size: 14px; appearance: none;
 }
+select option { background-color: #1c222d; color: white; }
 
 .action-btn {
   width: 100%; margin-top: 12px; padding: 14px; border-radius: 14px;
-  border: none; background: var(--primary); color: #fff; font-weight: bold; cursor: pointer;
+  border: none; background: var(--primary); color: #fff; font-weight: bold; cursor: pointer; transition: 0.2s;
+}
+
+.scroll-area { 
+  flex: 1; margin-top: 15px; background: rgba(0,0,0,0.1); 
+  border-radius: 15px; padding: 10px; overflow-y: auto; 
 }
 
 .list-item {
@@ -130,6 +131,25 @@ input, select {
 }
 .section-title { font-size: 11px; color: var(--primary); font-weight: bold; text-transform: uppercase; margin-top: 15px; display: block; }
 .close-btn { position: absolute; top: 18px; right: 20px; background: #2d3442; border: none; color: #fff; width: 30px; height: 30px; border-radius: 8px; z-index: 10; }
+
+/* ESTILO SWITCH CAMARA */
+.switch-container {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(255,255,255,0.03); padding: 10px 15px; border-radius: 12px;
+  margin-top: 10px; border: 1px solid var(--border);
+}
+.switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute; cursor: pointer; inset: 0; background-color: #333;
+  transition: .4s; border-radius: 34px;
+}
+.slider:before {
+  position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+  background-color: white; transition: .4s; border-radius: 50%;
+}
+input:checked + .slider { background-color: var(--success); }
+input:checked + .slider:before { transform: translateX(20px); }
 </style>
 </head>
 <body>
@@ -175,44 +195,42 @@ input, select {
 
   <div class="tab-body">
     <div id="tab-win" class="tab-content active">
-        <div style="flex-shrink:0">
-          <span class="section-title">Nueva Ventana</span>
-          <input id="vName" placeholder="Nombre de Ventana">
-          <input id="vIcon" placeholder="Emoji">
-          <button class="action-btn" onclick="addWindow()">Crear Ventana</button>
-          <span class="section-title" style="margin-top:20px">Gestionar Existentes</span>
-          <select id="delWinSelect"></select>
-          <button class="action-btn" onclick="askDeleteWindow()" style="background:var(--danger)">Borrar Ventana</button>
-        </div>
+        <span class="section-title">Nueva Ventana</span>
+        <input id="vName" placeholder="Nombre de Ventana">
+        <input id="vIcon" placeholder="Emoji">
+        <button class="action-btn" onclick="addWindow()">Crear Ventana</button>
+        <span class="section-title">Gestionar</span>
+        <select id="delWinSelect"></select>
+        <button class="action-btn" onclick="askDeleteWindow()" style="background:var(--danger)">Borrar Ventana</button>
     </div>
 
     <div id="tab-pre" class="tab-content">
-        <div style="flex-shrink:0">
-          <span class="section-title">Biblioteca de Campos</span>
-          <input id="pName" placeholder="Nombre del Campo">
-          <input id="pIcon" placeholder="Emoji">
-          <select id="pType">
-            <option value="text">Texto</option>
-            <option value="number">Número</option>
-            <option value="auto">Fecha y Hora Automática ⚡</option>
-          </select>
-          <input id="pOpt" placeholder="Opciones (Ej: Si|No)">
-          <button class="action-btn" onclick="addPreField()" style="background:var(--success)">Guardar Campo</button>
+        <span class="section-title">Biblioteca de Campos</span>
+        <input id="pName" placeholder="Nombre del Campo">
+        <input id="pIcon" placeholder="Emoji">
+        <select id="pType">
+          <option value="text">Texto</option>
+          <option value="number">Número</option>
+          <option value="auto">Fecha y Hora Automática ⚡</option>
+        </select>
+        <input id="pOpt" placeholder="Opciones (Ej: Si|No)">
+        <div class="switch-container">
+          <span style="font-size: 13px; color: #aaa;">Activar Cámara</span>
+          <label class="switch"><input type="checkbox" id="pCam"><span class="slider"></span></label>
         </div>
-        <span class="section-title">Campos Guardados</span>
-        <div class="scroll-area" id="preList"></div>
+        <button class="action-btn" onclick="addPreField()" style="background:var(--success); margin-top:15px">Guardar Campo</button>
+      <span class="section-title">Campos Guardados</span>
+      <div class="scroll-area" id="preList"></div>
     </div>
 
     <div id="tab-fields" class="tab-content">
-        <div style="flex-shrink:0">
-          <span class="section-title">1. Seleccionar Ventana</span>
-          <select id="fieldWin" onchange="refreshCurrentFieldsList()"></select>
-          <span class="section-title">2. Seleccionar Campo</span>
-          <select id="preSelect"></select>
-          <button class="action-btn" onclick="linkPresetToWindow()">Vincular Campo ✅</button>
-        </div>
-        <span class="section-title">Campos en esta ventana</span>
-        <div class="scroll-area" id="currentFieldsList"></div>
+        <span class="section-title">1. Seleccionar Ventana</span>
+        <select id="fieldWin" onchange="refreshCurrentFieldsList()"></select>
+        <span class="section-title">2. Seleccionar Campo</span>
+        <select id="preSelect"></select>
+        <button class="action-btn" onclick="linkPresetToWindow()">Vincular Campo ✅</button>
+      <span class="section-title">Campos vinculados</span>
+      <div class="scroll-area" id="currentFieldsList"></div>
     </div>
 
     <div id="tab-wsap" class="tab-content">
@@ -226,12 +244,12 @@ input, select {
 <div class="modal" id="formModal">
 <div class="modalContent" style="height: auto; max-height: 85vh;">
   <button class="close-btn" onclick="closeForm()">✕</button>
-  <div style="padding: 25px; display:flex; flex-direction:column; max-height:inherit">
-    <h3 id="formTitle" style="color:var(--primary); margin: 0 0 15px 0; flex-shrink:0"></h3>
-    <div id="formFields" class="scroll-area" style="background:transparent; border:none; padding:0; margin:0"></div>
-    <div style="display:flex; gap:10px; margin-top:20px; flex-shrink:0">
-      <button class="action-btn" onclick="sendWhats()" style="flex:2; margin:0">📤 Enviar</button>
-      <button class="action-btn" onclick="clearForm()" style="flex:1; background:#2d3442; margin:0">🧹</button>
+  <div style="padding: 25px;">
+    <h3 id="formTitle" style="color:var(--primary); margin: 0 0 20px 0;"></h3>
+    <div id="formFields" style="max-height: 45vh; overflow-y: auto; padding-right:5px"></div>
+    <div style="display:flex; gap:10px; margin-top:25px">
+      <button class="action-btn" onclick="sendWhats()" style="flex:2">📤 Enviar</button>
+      <button class="action-btn" onclick="clearForm()" style="flex:1; background:#2d3442">🧹</button>
     </div>
   </div>
 </div>
@@ -240,6 +258,8 @@ input, select {
 <script>
 let data = JSON.parse(localStorage.getItem("appDataV10")) || {windows:[], wsap:"", presets:[]};
 let currentWin = null;
+let currentPhotos = {};
+
 const save=()=>localStorage.setItem("appDataV10",JSON.stringify(data));
 
 function notify(msg) {
@@ -263,8 +283,9 @@ function switchTab(tId, b) {
 }
 
 function refreshSelectors(){
-  const opt = data.windows.map((w,i)=>`<option value="${i}">${w.icon} ${w.name}</option>`).join("");
-  fieldWin.innerHTML = opt; delWinSelect.innerHTML = opt;
+  const options = data.windows.map((w,i)=>`<option value="${i}">${w.icon} ${w.name}</option>`).join("");
+  fieldWin.innerHTML = options;
+  delWinSelect.innerHTML = options;
   preSelect.innerHTML = `<option value="">-- Seleccionar --</option>` + data.presets.map((p,i)=>`<option value="${i}">${p.icon} ${p.name}</option>`).join("");
   preList.innerHTML = data.presets.map((p,i)=>`
     <div class="list-item"><span>${p.icon} ${p.name}</span><button onclick="deletePreset(${i})" style="background:none; border:none; color:var(--danger); font-weight:bold; cursor:pointer">✕</button></div>
@@ -278,7 +299,7 @@ function refreshCurrentFieldsList() {
     container.innerHTML = data.windows[winIdx].fields.map((f, i) => `
       <div class="list-item">
         <span>${f.icon} ${f.name}</span>
-        <button onclick="removeField(${winIdx}, ${i})" style="background:rgba(211,47,47,0.1); border:1px solid var(--danger); color:var(--danger); border-radius:6px; padding:4px 10px; font-size:10px; cursor:pointer">QUITAR</button>
+        <button onclick="removeField(${winIdx}, ${i})" style="background:rgba(211,47,47,0.1); border:1px solid var(--danger); color:var(--danger); border-radius:6px; padding:2px 8px; font-size:10px; cursor:pointer">QUITAR</button>
       </div>
     `).join("") || "<small style='color:#666'>Sin campos vinculados</small>";
 }
@@ -300,8 +321,9 @@ function askDeleteWindow() {
 
 function addPreField(){
   if(!pName.value) return;
-  data.presets.push({ name: pName.value, icon: pIcon.value||"🔹", type: pType.value, opt: pOpt.value });
-  pName.value=""; pIcon.value=""; pOpt.value=""; save(); refreshSelectors(); notify("Campo guardado");
+  data.presets.push({ name: pName.value, icon: pIcon.value||"🔹", type: pType.value, opt: pOpt.value, cam: pCam.checked });
+  pName.value=""; pIcon.value=""; pOpt.value=""; pCam.checked=false;
+  save(); refreshSelectors(); notify("Campo guardado");
 }
 
 function deletePreset(i){ data.presets.splice(i,1); save(); refreshSelectors(); notify("Eliminado"); }
@@ -328,7 +350,7 @@ function openConfig(){ wsap.value=data.wsap||""; refreshSelectors(); configModal
 function closeConfig(){ data.wsap=wsap.value; save(); render(); configModal.style.display="none"; }
 
 function openForm(i){
-  currentWin=i; let w=data.windows[i]; formTitle.innerText=w.icon+" "+w.name; formFields.innerHTML="";
+  currentWin=i; currentPhotos={}; let w=data.windows[i]; formTitle.innerText=w.icon+" "+w.name; formFields.innerHTML="";
   w.fields.forEach((f,idx)=>{
     let d=document.createElement("div"); d.style.marginBottom="15px";
     d.innerHTML=`<label style="font-size:11px; color:#888; display:block; margin-bottom:5px">${f.icon} ${f.name}</label>`;
@@ -339,22 +361,49 @@ function openForm(i){
     } 
     else if(f.opt) d.innerHTML+=`<select data-i="${idx}">${f.opt.split("|").map(o=>`<option>${o}</option>`).join("")}</select>`;
     else d.innerHTML+=`<input data-i="${idx}" type="${f.type==='number'?'number':'text'}" placeholder="...">`;
+    
+    if(f.cam){
+      let fi=document.createElement("input"); fi.type="file"; fi.accept="image/*"; fi.capture="environment"; fi.style.display="none";
+      let cb=document.createElement("button"); cb.className="action-btn"; cb.style.background="#2d3442"; cb.innerHTML="📸 Tomar Foto";
+      cb.onclick=()=>fi.click();
+      fi.onchange=(e)=>{
+        let file = e.target.files[0];
+        if(file){
+            currentPhotos[idx] = file;
+            let old=d.querySelector("img"); if(old) old.remove();
+            let img=document.createElement("img"); img.src=URL.createObjectURL(file);
+            img.style.width="100%"; img.style.borderRadius="12px"; img.style.marginTop="10px"; fi.after(img);
+            notify("Foto capturada");
+        }
+      };
+      d.appendChild(fi); d.appendChild(cb);
+    }
     formFields.appendChild(d);
   });
   formModal.style.display="flex";
 }
 
-function sendWhats(){
+async function sendWhats(){
   let w=data.windows[currentWin]; 
   let msg=`*${w.icon} ${w.name.toUpperCase()}*\n─────────────────\n`;
   document.querySelectorAll("#formFields input,select").forEach(e=>{ 
-    if(e.dataset.i!==undefined) msg+=`• *${w.fields[e.dataset.i].name}:* ${e.value}\n`; 
+    if(e.dataset.i!==undefined) {
+        const fieldData = w.fields[e.dataset.i];
+        msg+=`• *${fieldData.icon} ${fieldData.name}:* ${e.value}\n`; 
+    }
   });
-  try { navigator.clipboard.writeText(msg); } catch(err) {}
+
+  if(Object.keys(currentPhotos).length > 0) msg += `\n📌 _(Adjunta la foto capturada)_`;
+
+  try { await navigator.clipboard.writeText(msg); } catch(err) {}
   window.open(`https://wa.me/${data.wsap}?text=`+encodeURIComponent(msg));
 }
 
-function clearForm(){ document.querySelectorAll("#formFields input").forEach(i=>!i.disabled&&(i.value="")); }
+function clearForm(){ 
+    document.querySelectorAll("#formFields input").forEach(i=>!i.disabled&&(i.value="")); 
+    document.querySelectorAll("#formFields img").forEach(i=>i.remove());
+    currentPhotos = {};
+}
 function closeForm(){ formModal.style.display="none"; }
 
 window.addEventListener('load', () => {
