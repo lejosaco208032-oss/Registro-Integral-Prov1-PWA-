@@ -3,12 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#1976d2">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-
 <title>Registro Integral Pro</title>
 <style>
 :root{
@@ -21,6 +15,10 @@
   --danger: #d32f2f;
   --success: #00c853;
 }
+
+* { scrollbar-width: none; -ms-overflow-style: none; outline: none; }
+*::-webkit-scrollbar { display: none; }
+
 body{
   margin:0; font-family: 'Segoe UI', sans-serif;
   background: radial-gradient(circle at top right, #1a1a2e, #0a0a0c);
@@ -28,7 +26,7 @@ body{
   padding-top: env(safe-area-inset-top);
 }
 
-/* PANTALLA DE ENTRADA (SPLASH) */
+/* SPLASH SCREEN */
 #splash {
   position: fixed; inset: 0; background: var(--bg);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -40,30 +38,27 @@ body{
 @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 @keyframes load { to { width: 100%; } }
 
-/* BOTÓN INSTALAR */
-#installBtn {
-  display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-  background: var(--success); color: white; padding: 10px 20px; border-radius: 50px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 9999; border: none; font-weight: bold;
-}
-
-/* ESTILOS ORIGINALES PRESERVADOS */
+/* TOAST MEJORADO */
 #toast {
-  position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
-  background: rgba(28, 34, 45, 0.95); color: #fff; border: 1px solid var(--primary);
-  padding: 12px 20px; border-radius: 16px; backdrop-filter: blur(10px);
-  z-index: 10000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-120px);
+  background: rgba(28, 34, 45, 0.9); color: #fff; border: 1px solid var(--primary);
+  padding: 14px 24px; border-radius: 20px; backdrop-filter: blur(15px);
+  z-index: 10000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-weight: 500;
 }
-#toast.show { transform: translateX(-50%) translateY(0); border-color: var(--success); }
-#confirmOverlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-  display: none; align-items: center; justify-content: center; z-index: 5000;
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+/* CONFIRMACIÓN PERSONALIZADA (MODAL) */
+#customConfirm {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+  display: none; align-items: center; justify-content: center; z-index: 11000;
+  backdrop-filter: blur(8px);
 }
 .confirm-card {
-  background: var(--card); border: 1px solid var(--border); padding: 25px;
-  border-radius: 24px; width: 80%; max-width: 300px; text-align: center;
+  background: var(--card); border: 1px solid var(--border);
+  width: 85%; max-width: 320px; border-radius: 25px; padding: 25px; text-align: center;
 }
+
 header{
   padding: 15px 20px; background: var(--glass); backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
@@ -72,46 +67,58 @@ header button#btnConfig{
   border: 1px solid var(--border); background: var(--primary); color: #fff;
   border-radius: 12px; width: 42px; height: 42px; cursor: pointer; font-size: 20px;
 }
+
 main{ padding:20px; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:15px; }
 .card {
   background: rgba(30, 30, 35, 0.6); border: 1px solid var(--border);
   border-radius: 20px; padding: 20px; text-align: center; backdrop-filter: blur(10px);
 }
+
 .modal{
   position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter: blur(10px);
   display:none; align-items:center; justify-content:center; z-index: 2000;
 }
 .modalContent{
   background: var(--card); border: 1px solid var(--border); width: 92%; max-width: 420px;
-  border-radius: 30px; position: relative; height: 80vh; display: flex; flex-direction: column; overflow: hidden;
+  border-radius: 30px; position: relative; height: 85vh; display: flex; flex-direction: column; overflow: hidden;
 }
 .modal-header { padding: 20px 20px 10px; }
-.tab-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
-.tab-container::-webkit-scrollbar { display: none; }
+.tab-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; }
 .tab-btn {
   background: rgba(255,255,255,0.05); color: #888; border: 1px solid var(--border); 
   padding: 8px 16px; border-radius: 12px; cursor: pointer; font-size: 12px; white-space: nowrap;
 }
 .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-.tab-body { flex: 1; overflow-y: auto; padding: 0 20px 20px; }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
+
+.tab-body { flex: 1; padding: 0 20px 20px; overflow: hidden; display: flex; flex-direction: column; }
+.tab-content { display: none; height: 100%; flex-direction: column; }
+.tab-content.active { display: flex; }
+
 input, select {
-  width:100%; padding:12px; border-radius:12px; border:1px solid var(--border);
-  background: rgba(0,0,0,0.2); color: #fff; margin-top: 8px; box-sizing: border-box; outline: none;
+  width:100%; padding:12px 15px; border-radius:12px; border:1px solid var(--border);
+  background: rgba(255, 255, 255, 0.07); color: #fff; margin-top: 8px; 
+  box-sizing: border-box; font-size: 14px; appearance: none;
 }
-input:disabled { opacity: 0.7; border-color: var(--primary); background: rgba(25, 118, 210, 0.15); color: #fff; }
-button.action-btn {
-  width: 100%; margin-top: 12px; padding: 12px; border-radius: 12px;
-  border: none; background: var(--primary); color: #fff; font-weight: bold; cursor: pointer;
+select option { background-color: #1c222d; color: white; }
+
+.action-btn {
+  width: 100%; margin-top: 12px; padding: 14px; border-radius: 14px;
+  border: none; background: var(--primary); color: #fff; font-weight: bold; cursor: pointer; transition: 0.2s;
 }
-.close-btn { position: absolute; top: 18px; right: 20px; background: #2d3442; border: none; color: #fff; width: 30px; height: 30px; border-radius: 8px; z-index: 10; }
-.scroll-area { margin-top: 15px; background: rgba(0,0,0,0.1); border-radius: 15px; padding: 10px; min-height: 50px;}
+.action-btn:active { transform: scale(0.98); opacity: 0.8; }
+
+.scroll-area { 
+  flex: 1; margin-top: 15px; background: rgba(0,0,0,0.1); 
+  border-radius: 15px; padding: 10px; overflow-y: auto; 
+}
+
 .list-item {
   display:flex; justify-content:space-between; align-items:center; 
-  background: var(--glass); padding: 10px; border-radius: 10px; margin-bottom: 6px; font-size: 13px;
+  background: var(--glass); padding: 12px; border-radius: 14px; margin-bottom: 8px; font-size: 13px;
+  border: 1px solid var(--border);
 }
 .section-title { font-size: 11px; color: var(--primary); font-weight: bold; text-transform: uppercase; margin-top: 15px; display: block; }
+.close-btn { position: absolute; top: 18px; right: 20px; background: #2d3442; border: none; color: #fff; width: 30px; height: 30px; border-radius: 8px; z-index: 10; }
 </style>
 </head>
 <body>
@@ -123,14 +130,15 @@ button.action-btn {
 </div>
 
 <div id="toast">✅ Acción exitosa</div>
-<button id="installBtn">📲 Instalar App</button>
 
-<div id="confirmOverlay">
+<div id="customConfirm">
   <div class="confirm-card">
-    <h3 id="confTitle" style="margin-top:0; font-size:18px">¿Confirmar?</h3>
-    <p id="confMsg" style="color:#888; font-size:13px"></p>
-    <button class="action-btn" id="confirmExecBtn" style="background:var(--danger)">Eliminar</button>
-    <button class="action-btn" onclick="hideConfirm()" style="background:transparent; color:#666">Cancelar</button>
+    <div id="confirmIcon" style="font-size: 40px; margin-bottom: 15px;">⚠️</div>
+    <p id="confirmMsg" style="margin-bottom: 25px; line-height: 1.5; font-weight: 500;"></p>
+    <div style="display: flex; gap: 10px;">
+      <button class="action-btn" id="confirmCancel" style="background: #2d3442; margin: 0;">Cancelar</button>
+      <button class="action-btn" id="confirmOk" style="background: var(--danger); margin: 0;">Eliminar</button>
+    </div>
   </div>
 </div>
 
@@ -156,40 +164,37 @@ button.action-btn {
 
   <div class="tab-body">
     <div id="tab-win" class="tab-content active">
-      <span class="section-title">Nueva Ventana</span>
-      <input id="vName" placeholder="Nombre de Ventana">
-      <input id="vIcon" placeholder="Emoji">
-      <button class="action-btn" onclick="addWindow()">Crear Ventana</button>
-      <span class="section-title">Gestionar</span>
-      <select id="delWinSelect"></select>
-      <button class="action-btn" onclick="askDeleteWindow()" style="background:var(--danger)">Borrar Ventana</button>
+        <span class="section-title">Nueva Ventana</span>
+        <input id="vName" placeholder="Nombre de Ventana">
+        <input id="vIcon" placeholder="Emoji">
+        <button class="action-btn" onclick="addWindow()">Crear Ventana</button>
+        <span class="section-title">Gestionar</span>
+        <select id="delWinSelect"></select>
+        <button class="action-btn" onclick="askDeleteWindow()" style="background:var(--danger)">Borrar Ventana</button>
     </div>
 
     <div id="tab-pre" class="tab-content">
-      <span class="section-title">Biblioteca de Campos</span>
-      <input id="pName" placeholder="Nombre del Campo">
-      <input id="pIcon" placeholder="Emoji">
-      <select id="pType">
-        <option value="text">Texto</option>
-        <option value="number">Número</option>
-        <option value="auto">Fecha y Hora Automática ⚡</option>
-      </select>
-      <input id="pOpt" placeholder="Opciones (Ej: Si|No)">
-      <label style="display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12px">
-        <input type="checkbox" id="pCam"> Usar Cámara
-      </label>
-      <button class="action-btn" onclick="addPreField()" style="background:var(--success)">Guardar Campo</button>
-      <span class="section-title">Campos Guardados</span>
+        <span class="section-title">Nuevo Campo</span>
+        <input id="pName" placeholder="Nombre del Campo">
+        <input id="pIcon" placeholder="Emoji">
+        <select id="pType">
+          <option value="text">Texto</option>
+          <option value="number">Número</option>
+          <option value="auto">Fecha/Hora Automática</option>
+        </select>
+        <input id="pOpt" placeholder="Opciones (Ej: Si|No)">
+        <button class="action-btn" onclick="addPreField()" style="background:var(--success)">Guardar en Biblioteca</button>
+      <span class="section-title">Guardados</span>
       <div class="scroll-area" id="preList"></div>
     </div>
 
     <div id="tab-fields" class="tab-content">
-      <span class="section-title">1. Seleccionar Ventana</span>
-      <select id="fieldWin" onchange="refreshCurrentFieldsList()"></select>
-      <span class="section-title">2. Seleccionar Campo</span>
-      <select id="preSelect"></select>
-      <button class="action-btn" onclick="linkPresetToWindow()">Vincular Campo ✅</button>
-      <span class="section-title">Campos vinculados a esta ventana</span>
+        <span class="section-title">1. Ventana destino</span>
+        <select id="fieldWin" onchange="refreshCurrentFieldsList()"></select>
+        <span class="section-title">2. Seleccionar Campo</span>
+        <select id="preSelect"></select>
+        <button class="action-btn" onclick="linkPresetToWindow()">Vincular ✅</button>
+      <span class="section-title">Vínculos actuales</span>
       <div class="scroll-area" id="currentFieldsList"></div>
     </div>
 
@@ -206,7 +211,7 @@ button.action-btn {
   <button class="close-btn" onclick="closeForm()">✕</button>
   <div style="padding: 25px;">
     <h3 id="formTitle" style="color:var(--primary); margin: 0 0 20px 0;"></h3>
-    <div id="formFields"></div>
+    <div id="formFields" style="max-height: 45vh; overflow-y: auto; padding-right:5px"></div>
     <div style="display:flex; gap:10px; margin-top:25px">
       <button class="action-btn" onclick="sendWhats()" style="flex:2">📤 Enviar</button>
       <button class="action-btn" onclick="clearForm()" style="flex:1; background:#2d3442">🧹</button>
@@ -216,24 +221,25 @@ button.action-btn {
 </div>
 
 <script>
-/* LÓGICA ORIGINAL PRESERVADA */
 let data = JSON.parse(localStorage.getItem("appDataV10")) || {windows:[], wsap:"", presets:[]};
-let currentWin=null; let pendingAction = null;
+let currentWin = null;
 const save=()=>localStorage.setItem("appDataV10",JSON.stringify(data));
 
+// NOTIFICACIÓN TOAST
 function notify(msg) {
   const t = document.getElementById("toast"); t.innerText = msg;
   t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 2000);
 }
 
-function showConfirm(title, msg, onConfirm) {
-    document.getElementById("confTitle").innerText = title;
-    document.getElementById("confMsg").innerText = msg;
-    document.getElementById("confirmOverlay").style.display = "flex";
-    pendingAction = onConfirm;
+// CONFIRMACIÓN PERSONALIZADA SIN ALERT
+function customConfirm(msg, onOk) {
+    const modal = document.getElementById("customConfirm");
+    document.getElementById("confirmMsg").innerText = msg;
+    modal.style.display = "flex";
+    
+    document.getElementById("confirmOk").onclick = () => { modal.style.display = "none"; onOk(); };
+    document.getElementById("confirmCancel").onclick = () => { modal.style.display = "none"; };
 }
-function hideConfirm() { document.getElementById("confirmOverlay").style.display = "none"; }
-document.getElementById("confirmExecBtn").onclick = () => { if(pendingAction) pendingAction(); hideConfirm(); };
 
 function switchTab(tId, b) {
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
@@ -244,49 +250,48 @@ function switchTab(tId, b) {
 
 function refreshSelectors(){
   [fieldWin, delWinSelect].forEach(s=>{ s.innerHTML = data.windows.map((w,i)=>`<option value="${i}">${w.icon} ${w.name}</option>`).join(""); });
-  preSelect.innerHTML = `<option value="">-- Campo de Biblioteca --</option>` + data.presets.map((p,i)=>`<option value="${i}">${p.icon} ${p.name}</option>`).join("");
+  preSelect.innerHTML = `<option value="">-- Seleccionar --</option>` + data.presets.map((p,i)=>`<option value="${i}">${p.icon} ${p.name}</option>`).join("");
   preList.innerHTML = data.presets.map((p,i)=>`
-    <div class="list-item"><span>${p.icon} ${p.name}</span><button onclick="askDeletePreset(${i})" style="background:none; border:none; color:var(--danger)">✕</button></div>
-  `).join("") || "<small>Vacia</small>";
+    <div class="list-item"><span>${p.icon} ${p.name}</span><button onclick="deletePreset(${i})" style="background:none; border:none; color:var(--danger); font-weight:bold">✕</button></div>
+  `).join("") || "<small style='color:#666'>Biblioteca vacía</small>";
 }
 
 function refreshCurrentFieldsList() {
     const winIdx = fieldWin.value;
     const container = document.getElementById("currentFieldsList");
-    if(winIdx === "" || !data.windows[winIdx]) { container.innerHTML = "<small>Selecciona una ventana</small>"; return; }
+    if(!data.windows[winIdx]) { container.innerHTML = ""; return; }
     container.innerHTML = data.windows[winIdx].fields.map((f, i) => `
       <div class="list-item">
         <span>${f.icon} ${f.name}</span>
-        <button onclick="askRemoveField(${winIdx}, ${i})" style="background:rgba(211,47,47,0.1); border:1px solid var(--danger); color:var(--danger); border-radius:6px; padding:2px 8px; font-size:10px">QUITAR</button>
+        <button onclick="removeField(${winIdx}, ${i})" style="background:rgba(211,47,47,0.1); border:1px solid var(--danger); color:var(--danger); border-radius:6px; padding:2px 8px; font-size:10px">QUITAR</button>
       </div>
-    `).join("") || "<small>No hay campos vinculados</small>";
+    `).join("") || "<small style='color:#666'>Sin campos</small>";
 }
 
 function addWindow(){
-  if(!vName.value) return;
+  if(!vName.value) { notify("Escribe un nombre"); return; }
   data.windows.push({name:vName.value, icon:vIcon.value||'📁', fields:[]});
   vName.value=""; vIcon.value=""; save(); refreshSelectors(); render(); notify("Ventana creada");
 }
 
 function askDeleteWindow() {
-    const idx = delWinSelect.value; if(idx === "") return;
-    showConfirm("Eliminar Ventana", `¿Borrar "${data.windows[idx].name}"?`, () => { 
-      data.windows.splice(idx, 1); save(); refreshSelectors(); render(); notify("Ventana eliminada"); 
+    const idx = delWinSelect.value;
+    if (idx === "" || !data.windows[idx]) return;
+    
+    // USANDO LA NUEVA CONFIRMACIÓN VISUAL
+    customConfirm(`¿Eliminar ventana "${data.windows[idx].name}"?`, () => {
+        data.windows.splice(idx, 1);
+        save(); refreshSelectors(); render(); notify("Eliminado con éxito");
     });
 }
 
 function addPreField(){
-  if(!pName.value) return;
-  data.presets.push({ name: pName.value, icon: pIcon.value||"🔹", type: pType.value, opt: pOpt.value, cam: pCam.checked });
-  pName.value=""; pIcon.value=""; pOpt.value=""; pCam.checked=false;
-  save(); refreshSelectors(); notify("Campo guardado");
+  if(!pName.value) { notify("Falta nombre"); return; }
+  data.presets.push({ name: pName.value, icon: pIcon.value||"🔹", type: pType.value, opt: pOpt.value });
+  pName.value=""; pIcon.value=""; pOpt.value=""; save(); refreshSelectors(); notify("Campo guardado");
 }
 
-function askDeletePreset(i) {
-    showConfirm("Borrar de Biblioteca", `¿Eliminar "${data.presets[i].name}" permanentemente?`, () => { 
-      data.presets.splice(i,1); save(); refreshSelectors(); notify("Campo eliminado"); 
-    });
-}
+function deletePreset(i){ data.presets.splice(i,1); save(); refreshSelectors(); notify("Eliminado"); }
 
 function linkPresetToWindow(){
   const winIdx = fieldWin.value; const preIdx = preSelect.value;
@@ -295,14 +300,7 @@ function linkPresetToWindow(){
   save(); refreshCurrentFieldsList(); notify("Campo vinculado");
 }
 
-function askRemoveField(wI, fI) {
-    const fieldName = data.windows[wI].fields[fI].name;
-    showConfirm("Quitar Campo", `¿Desvincular "${fieldName}" de esta ventana?`, () => {
-        data.windows[wI].fields.splice(fI, 1);
-        save(); refreshCurrentFieldsList();
-        notify("Campo desvinculado");
-    });
-}
+function removeField(wI, fI){ data.windows[wI].fields.splice(fI,1); save(); refreshCurrentFieldsList(); notify("Quitado"); }
 
 function render(){
   main.innerHTML="";
@@ -318,6 +316,7 @@ function closeConfig(){ data.wsap=wsap.value; save(); render(); configModal.styl
 
 function openForm(i){
   currentWin=i; let w=data.windows[i]; formTitle.innerText=w.icon+" "+w.name; formFields.innerHTML="";
+  if(w.fields.length === 0) { formFields.innerHTML = "<p style='color:#666; text-align:center'>No hay campos vinculados</p>"; }
   w.fields.forEach((f,idx)=>{
     let d=document.createElement("div"); d.style.marginBottom="15px";
     d.innerHTML=`<label style="font-size:11px; color:#888; display:block; margin-bottom:5px">${f.icon} ${f.name}</label>`;
@@ -328,62 +327,27 @@ function openForm(i){
     } 
     else if(f.opt) d.innerHTML+=`<select data-i="${idx}">${f.opt.split("|").map(o=>`<option>${o}</option>`).join("")}</select>`;
     else d.innerHTML+=`<input data-i="${idx}" type="${f.type==='number'?'number':'text'}" placeholder="...">`;
-    if(f.cam){
-      let fi=document.createElement("input"); fi.type="file"; fi.accept="image/*"; fi.capture="environment"; fi.style.display="none";
-      let cb=document.createElement("button"); cb.className="action-btn"; cb.style.background="#2d3442"; cb.innerHTML="📸 Foto";
-      cb.onclick=()=>fi.click();
-      fi.onchange=()=>{
-        let old=d.querySelector("img"); if(old) old.remove();
-        let img=document.createElement("img"); img.src=URL.createObjectURL(fi.files[0]);
-        img.style.width="100%"; img.style.borderRadius="12px"; img.style.marginTop="10px"; fi.after(img);
-      };
-      d.appendChild(fi); d.appendChild(cb);
-    }
     formFields.appendChild(d);
   });
   formModal.style.display="flex";
 }
 
 function sendWhats(){
-  let w=data.windows[currentWin]; let msg=`*${w.icon} ${w.name.toUpperCase()}*\n\n`;
-  document.querySelectorAll("#formFields input,select").forEach(e=>{ if(e.dataset.i!==undefined) msg+=`• *${w.fields[e.dataset.i].name}:* ${e.value}\n`; });
+  let w=data.windows[currentWin]; 
+  let msg=`*${w.icon} ${w.name.toUpperCase()}*\n─────────────────\n`;
+  document.querySelectorAll("#formFields input,select").forEach(e=>{ 
+    if(e.dataset.i!==undefined) msg+=`• *${w.fields[e.dataset.i].name}:* ${e.value}\n`; 
+  });
   window.open(`https://wa.me/${data.wsap}?text=`+encodeURIComponent(msg));
 }
-function clearForm(){ 
-    document.querySelectorAll("#formFields input").forEach(i=>!i.disabled&&(i.value="")); 
-    document.querySelectorAll("#formFields img").forEach(i=>i.remove()); 
-    notify("Formulario limpio"); 
-}
+
+function clearForm(){ document.querySelectorAll("#formFields input").forEach(i=>!i.disabled&&(i.value="")); }
 function closeForm(){ formModal.style.display="none"; }
-render();
 
-// --- NUEVA LÓGICA: CIERRE DE SPLASH Y PWA ---
 window.addEventListener('load', () => {
-  const splash = document.getElementById('splash');
-  setTimeout(() => {
-    splash.style.opacity = '0';
-    setTimeout(() => splash.remove(), 500);
-  }, 1500);
-
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW OK'), err => console.log('SW ERR'));
-  }
+  setTimeout(() => { document.getElementById('splash').style.opacity = '0'; setTimeout(() => document.getElementById('splash').remove(), 500); }, 1500);
 });
-
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault(); deferredPrompt = e;
-  document.getElementById('installBtn').style.display = 'block';
-});
-
-document.getElementById('installBtn').addEventListener('click', async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') document.getElementById('installBtn').style.display = 'none';
-    deferredPrompt = null;
-  }
-});
+render();
 </script>
 </body>
 </html>
