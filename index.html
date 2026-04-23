@@ -3,413 +3,375 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Registro Integral Pro</title>
+<meta name="color-scheme" content="dark">
+<title>Registro Pro Ultra 3.1</title>
 <style>
-:root{
+:root {
   --bg: #0a0a0c;
   --card: #1c222d;
   --primary: #1976d2;
-  --text: #e0e0e0;
+  --text: #ffffff;
+  --border: rgba(255, 255, 255, 0.12);
   --glass: rgba(255, 255, 255, 0.05);
-  --border: rgba(255, 255, 255, 0.1);
-  --danger: #d32f2f;
   --success: #00c853;
+  --warning: #ff9800;
+  --danger: #ff5252;
 }
 
-/* ELIMINACIÓN TOTAL DE BARRAS DE DESPLAZAMIENTO */
-* { 
-    scrollbar-width: none !important; 
-    -ms-overflow-style: none !important; 
-    outline: none; 
-}
-*::-webkit-scrollbar { 
-    display: none !important; 
-    width: 0 !important; 
-    height: 0 !important; 
-}
+* { scrollbar-width: none !important; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+*::-webkit-scrollbar { display: none !important; }
 
-body{
-  margin:0; font-family: 'Segoe UI', sans-serif;
+body {
+  margin: 0; font-family: 'Segoe UI', Roboto, sans-serif;
   background: radial-gradient(circle at top right, #1a1a2e, #0a0a0c);
-  color:var(--text); min-height: 100vh; overflow: hidden;
-  padding-top: env(safe-area-inset-top);
-  -webkit-tap-highlight-color: transparent;
+  color: var(--text); min-height: 100vh; overflow: hidden;
 }
 
-/* SPLASH SCREEN */
-#splash {
-  position: fixed; inset: 0; background: var(--bg);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  z-index: 10000; transition: opacity 0.5s ease;
+/* [NUEVA FUNCIÓN: ESTILOS_ADITIVOS] - INICIO */
+#pList, #fFields {
+  overflow-y: auto !important;
+  padding-right: 5px;
+  -webkit-overflow-scrolling: touch;
 }
-.loader-logo { font-size: 60px; margin-bottom: 20px; filter: drop-shadow(0 0 15px var(--primary)); animation: pulse 2s infinite; }
-.loader-bar { width: 150px; height: 4px; background: var(--glass); border-radius: 10px; overflow: hidden; }
-.loader-progress { width: 0%; height: 100%; background: var(--primary); box-shadow: 0 0 10px var(--primary); animation: load 1.5s forwards; }
-@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-@keyframes load { to { width: 100%; } }
 
-/* TOAST / NOTIFICACIONES */
+#pList { max-height: 250px; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px; }
+
+/* Estilización de scrollbars para visibilidad en escritorio */
+#pList::-webkit-scrollbar, #fFields::-webkit-scrollbar {
+  display: block !important;
+  width: 4px;
+}
+#pList::-webkit-scrollbar-thumb, #fFields::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+.img-preview {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-bottom: 15px;
+  border: 1px solid var(--border);
+  display: none;
+}
+/* [NUEVA FUNCIÓN] - FIN */
+
+/* NOTIFICACIONES */
 #toast {
-  position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-120px);
-  background: rgba(28, 34, 45, 0.9); color: #fff; border: 1px solid var(--primary);
-  padding: 14px 24px; border-radius: 20px; backdrop-filter: blur(15px);
-  z-index: 10000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-weight: 500;
+  position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-150px);
+  padding: 16px 28px; border-radius: 20px; font-weight: bold; font-size: 14px;
+  z-index: 10000; transition: 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.8); text-align: center; min-width: 280px;
 }
 #toast.show { transform: translateX(-50%) translateY(0); }
+.t-success { background: var(--success); color: #fff; }
+.t-warning { background: var(--warning); color: #000; }
+.t-danger { background: var(--danger); color: #fff; }
 
-/* AVISO DE CONFIRMACIÓN PERSONALIZADO */
-#customConfirm {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-  display: none; align-items: center; justify-content: center; z-index: 11000;
-  backdrop-filter: blur(8px);
-}
-.confirm-card {
-  background: var(--card); border: 1px solid var(--border);
-  width: 85%; max-width: 320px; border-radius: 25px; padding: 25px; text-align: center;
-}
-
-header{
-  padding: 15px 20px; background: var(--glass); backdrop-filter: blur(10px);
+header {
+  padding: 15px 20px; background: var(--glass); backdrop-filter: blur(15px);
   border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
 }
-header button#btnConfig{
-  border: 1px solid var(--border); background: var(--primary); color: #fff;
-  border-radius: 12px; width: 42px; height: 42px; cursor: pointer; font-size: 20px;
+
+main { 
+  padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; 
+  height: calc(100vh - 75px); overflow-y: auto;
 }
 
-main{ 
-    padding:20px; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:15px; 
-    height: calc(100vh - 80px); overflow-y: auto;
-}
 .card {
-  background: rgba(30, 30, 35, 0.6); border: 1px solid var(--border);
-  border-radius: 20px; padding: 20px; text-align: center; backdrop-filter: blur(10px);
+  background: rgba(35, 35, 45, 0.7); border: 1px solid var(--border);
+  border-radius: 24px; padding: 25px 15px; text-align: center; transition: 0.2s;
+}
+.card:active { transform: scale(0.96); background: var(--glass); }
+
+/* MODALES */
+.modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(15px);
+  display: none; align-items: center; justify-content: center; z-index: 2000;
 }
 
-.modal{
-  position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter: blur(10px);
-  display:none; align-items:center; justify-content:center; z-index: 2000;
-}
-.modalContent{
+.modalContent {
   background: var(--card); border: 1px solid var(--border); width: 92%; max-width: 420px;
-  border-radius: 30px; position: relative; height: 85vh; display: flex; flex-direction: column; overflow: hidden;
+  border-radius: 32px; height: 85vh; display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
-.modal-header { padding: 20px 20px 10px; flex-shrink: 0; }
-.tab-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; }
-.tab-btn {
-  background: rgba(255,255,255,0.05); color: #888; border: 1px solid var(--border); 
-  padding: 8px 16px; border-radius: 12px; cursor: pointer; font-size: 12px; white-space: nowrap;
-}
-.tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-.tab-body { flex: 1; padding: 0 20px 20px; overflow: hidden; display: flex; flex-direction: column; }
-.tab-content { display: none; height: 100%; flex-direction: column; overflow-y: auto; }
-.tab-content.active { display: flex; }
+.m-header { padding: 20px; flex-shrink: 0; border-bottom: 1px solid var(--border); position: relative; }
+.m-footer { padding: 20px; flex-shrink: 0; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+.m-scroll { flex: 1; overflow-y: auto; padding: 20px; -webkit-overflow-scrolling: touch; }
 
+/* FORMULARIO */
+label { display: block; color: var(--primary); font-size: 11px; font-weight: 800; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
 input, select {
-  width:100%; padding:12px 15px; border-radius:12px; border:1px solid var(--border);
-  background: rgba(255, 255, 255, 0.07); color: #fff; margin-top: 8px; 
-  box-sizing: border-box; font-size: 14px; appearance: none;
+  width: 100%; padding: 16px; border-radius: 16px; border: 1px solid var(--border);
+  background: #252a34 !important; color: #ffffff !important; font-size: 16px; margin-bottom: 18px;
+  appearance: none; -webkit-appearance: none;
 }
-select option { background-color: #1c222d; color: white; }
 
 .action-btn {
-  width: 100%; margin-top: 12px; padding: 14px; border-radius: 14px;
-  border: none; background: var(--primary); color: #fff; font-weight: bold; cursor: pointer; transition: 0.2s;
+  width: 100%; padding: 16px; border-radius: 16px; border: none; 
+  background: var(--primary); color: #fff; font-weight: bold; cursor: pointer;
 }
 
-.scroll-area { 
-  flex: 1; margin-top: 15px; background: rgba(0,0,0,0.1); 
-  border-radius: 15px; padding: 10px; overflow-y: auto; 
-}
+.close-btn { position: absolute; top: 18px; right: 20px; background: #333; color: #fff; border: none; width: 34px; height: 34px; border-radius: 10px; font-size: 16px; z-index: 10; }
 
-.list-item {
-  display:flex; justify-content:space-between; align-items:center; 
-  background: var(--glass); padding: 12px; border-radius: 14px; margin-bottom: 8px; font-size: 13px;
-  border: 1px solid var(--border);
-}
-.section-title { font-size: 11px; color: var(--primary); font-weight: bold; text-transform: uppercase; margin-top: 15px; display: block; }
-.close-btn { position: absolute; top: 18px; right: 20px; background: #2d3442; border: none; color: #fff; width: 30px; height: 30px; border-radius: 8px; z-index: 10; }
+/* TABS */
+.tabs { display: flex; gap: 10px; overflow-x: auto; margin-top: 12px; padding-bottom: 5px; }
+.t-btn { background: var(--glass); color: #999; border: 1px solid var(--border); padding: 10px 16px; border-radius: 12px; font-size: 12px; white-space: nowrap; }
+.t-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-/* ESTILO SWITCH CAMARA */
-.switch-container {
-  display: flex; align-items: center; justify-content: space-between;
-  background: rgba(255,255,255,0.03); padding: 10px 15px; border-radius: 12px;
-  margin-top: 10px; border: 1px solid var(--border);
-}
-.switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider {
-  position: absolute; cursor: pointer; inset: 0; background-color: #333;
-  transition: .4s; border-radius: 34px;
-}
-.slider:before {
-  position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
-  background-color: white; transition: .4s; border-radius: 50%;
-}
-input:checked + .slider { background-color: var(--success); }
-input:checked + .slider:before { transform: translateX(20px); }
+.list-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: rgba(255,255,255,0.03); border-radius: 14px; margin-bottom: 8px; border: 1px solid var(--border); }
+
+/* MODAL DE CONFIRMACIÓN PERSONALIZADO */
+#confirmModal { z-index: 3000; }
+.confirm-box { background: #1c222d; padding: 30px; border-radius: 25px; border: 1px solid var(--danger); text-align: center; width: 85%; max-width: 320px; }
 </style>
 </head>
 <body>
 
-<div id="splash">
-  <div class="loader-logo">📑</div>
-  <div style="font-weight: bold; letter-spacing: 2px; margin-bottom: 15px;">REGISTRO PRO</div>
-  <div class="loader-bar"><div class="loader-progress"></div></div>
-</div>
+<div id="toast"></div>
 
-<div id="toast">✅ Acción exitosa</div>
-
-<div id="customConfirm">
-  <div class="confirm-card">
-    <div id="confirmIcon" style="font-size: 40px; margin-bottom: 15px;">⚠️</div>
-    <p id="confirmMsg" style="margin-bottom: 25px; line-height: 1.5; font-weight: 500;"></p>
+<div class="modal" id="confirmModal">
+  <div class="confirm-box">
+    <div style="font-size: 40px; margin-bottom: 15px;">⚠️</div>
+    <h3 style="margin: 0 0 10px 0;">¿Estás seguro?</h3>
+    <p id="confirmText" style="font-size: 14px; color: #aaa; margin-bottom: 25px;"></p>
     <div style="display: flex; gap: 10px;">
-      <button class="action-btn" id="confirmCancel" style="background: #2d3442; margin: 0;">Cancelar</button>
-      <button class="action-btn" id="confirmOk" style="background: var(--danger); margin: 0;">Eliminar</button>
+      <button class="action-btn" style="background:#333" onclick="closeConfirm(false)">Cancelar</button>
+      <button class="action-btn" style="background:var(--danger)" onclick="closeConfirm(true)">Eliminar</button>
     </div>
   </div>
 </div>
 
 <header>
-  <span style="font-weight:bold; letter-spacing:1px">REGISTRO PRO</span>
-  <button id="btnConfig" onclick="openConfig()">⚙️</button>
+  <span style="font-weight:900; letter-spacing:1px; color:var(--primary)">REGISTRO PRO</span>
+  <button style="background:var(--primary); color:white; border:none; padding:10px 18px; border-radius:14px; font-weight:bold" onclick="openConfig()">⚙️</button>
 </header>
 
 <main id="main"></main>
 
 <div class="modal" id="configModal">
 <div class="modalContent">
-  <button class="close-btn" onclick="closeConfig()">✕</button>
-  <div class="modal-header">
-    <h3 style="margin: 0 0 15px 0; font-size: 18px;">Configuración</h3>
-    <div class="tab-container">
-      <button class="tab-btn active" onclick="switchTab('tab-win', this)">Ventanas</button>
-      <button class="tab-btn" onclick="switchTab('tab-pre', this)">Biblioteca</button>
-      <button class="tab-btn" onclick="switchTab('tab-fields', this)">Asignar</button>
-      <button class="tab-btn" onclick="switchTab('tab-wsap', this)">WhatsApp</button>
+  <div class="m-header">
+    <button class="close-btn" onclick="closeConfig()">✕</button>
+    <h3 style="margin:0">Configuración</h3>
+    <div class="tabs">
+      <button class="t-btn active" onclick="tab('t-win', this)">Ventanas</button>
+      <button class="t-btn" onclick="tab('t-pre', this)">Biblioteca</button>
+      <button class="t-btn" onclick="tab('t-link', this)">Asignar</button>
+      <button class="t-btn" onclick="tab('t-ws', this)">WhatsApp</button>
     </div>
   </div>
 
-  <div class="tab-body">
-    <div id="tab-win" class="tab-content active">
-        <span class="section-title">Nueva Ventana</span>
-        <input id="vName" placeholder="Nombre de Ventana">
-        <input id="vIcon" placeholder="Emoji">
-        <button class="action-btn" onclick="addWindow()">Crear Ventana</button>
-        <span class="section-title">Gestionar</span>
-        <select id="delWinSelect"></select>
-        <button class="action-btn" onclick="askDeleteWindow()" style="background:var(--danger)">Borrar Ventana</button>
-    </div>
-
-    <div id="tab-pre" class="tab-content">
-        <span class="section-title">Biblioteca de Campos</span>
-        <input id="pName" placeholder="Nombre del Campo">
-        <input id="pIcon" placeholder="Emoji">
-        <select id="pType">
-          <option value="text">Texto</option>
-          <option value="number">Número</option>
-          <option value="auto">Fecha y Hora Automática ⚡</option>
-        </select>
-        <input id="pOpt" placeholder="Opciones (Ej: Si|No)">
-        <div class="switch-container">
-          <span style="font-size: 13px; color: #aaa;">Activar Cámara</span>
-          <label class="switch"><input type="checkbox" id="pCam"><span class="slider"></span></label>
+  <div class="m-scroll">
+    <div id="t-win" class="t-panel">
+        <label>Nueva Ventana</label>
+        <input id="vN" placeholder="Ej: Reporte Diario">
+        <input id="vI" placeholder="Emoji (Ej: 📝)">
+        <button class="action-btn" onclick="addW()">Crear Sección</button>
+        
+        <div style="margin-top:40px; border-top:1px solid var(--border); padding-top:20px">
+          <label style="color:var(--danger)">Eliminar Sección</label>
+          <select id="vD"></select>
+          <button class="action-btn" style="background:var(--danger)" onclick="askDelete('window')">Eliminar Selección</button>
         </div>
-        <button class="action-btn" onclick="addPreField()" style="background:var(--success); margin-top:15px">Guardar Campo</button>
-      <span class="section-title">Campos Guardados</span>
-      <div class="scroll-area" id="preList"></div>
     </div>
 
-    <div id="tab-fields" class="tab-content">
-        <span class="section-title">1. Seleccionar Ventana</span>
-        <select id="fieldWin" onchange="refreshCurrentFieldsList()"></select>
-        <span class="section-title">2. Seleccionar Campo</span>
-        <select id="preSelect"></select>
-        <button class="action-btn" onclick="linkPresetToWindow()">Vincular Campo ✅</button>
-      <span class="section-title">Campos vinculados</span>
-      <div class="scroll-area" id="currentFieldsList"></div>
+    <div id="t-pre" class="t-panel" style="display:none">
+        <label>Nombre del Campo</label>
+        <input id="pN" placeholder="Ej: Nombre del Cliente">
+        <label>Tipo de Entrada</label>
+        <select id="pT">
+            <option value="text">Texto</option>
+            <option value="number">Número</option>
+            <option value="auto">Fecha y Hora Auto</option>
+            <option value="photo">Cámara / Foto</option>
+        </select>
+        <label>Opciones (Opcional)</label>
+        <input id="pO" placeholder="Ej: Si|No|Tal vez">
+        <button class="action-btn" onclick="addP()">Guardar Campo</button>
+        <div id="pList"></div>
     </div>
 
-    <div id="tab-wsap" class="tab-content">
-      <span class="section-title">Configuración WhatsApp</span>
-      <input id="wsap" placeholder="+573000000000">
+    <div id="t-link" class="t-panel" style="display:none">
+        <label>1. Ventana</label>
+        <select id="lW" onchange="listF()"></select>
+        <label>2. Campo a Vincular</label>
+        <select id="lP"></select>
+        <button class="action-btn" onclick="link()">Vincular ✅</button>
+        <div id="fList" style="margin-top:20px"></div>
+    </div>
+
+    <div id="t-ws" class="t-panel" style="display:none">
+      <label>Número WhatsApp Destinatario</label>
+      <input id="ws" placeholder="+573000000000">
     </div>
   </div>
 </div>
 </div>
 
 <div class="modal" id="formModal">
-<div class="modalContent" style="height: auto; max-height: 85vh;">
-  <button class="close-btn" onclick="closeForm()">✕</button>
-  <div style="padding: 25px;">
-    <h3 id="formTitle" style="color:var(--primary); margin: 0 0 20px 0;"></h3>
-    <div id="formFields" style="max-height: 45vh; overflow-y: auto; padding-right:5px"></div>
-    <div style="display:flex; gap:10px; margin-top:25px">
-      <button class="action-btn" onclick="sendWhats()" style="flex:2">📤 Enviar</button>
-      <button class="action-btn" onclick="clearForm()" style="flex:1; background:#2d3442">🧹</button>
-    </div>
+<div class="modalContent">
+  <div class="m-header">
+    <button class="close-btn" onclick="closeForm()">✕</button>
+    <h3 id="fTitle" style="color:var(--primary); margin:0"></h3>
+  </div>
+  <div id="fFields" class="m-scroll"></div>
+  <div class="m-footer">
+    <button class="action-btn" onclick="send()" style="flex:2">📤 Enviar Datos</button>
+    <button class="action-btn" onclick="askDelete('clear')" style="flex:1; background:#2d3442">🧹</button>
   </div>
 </div>
 </div>
 
 <script>
-let data = JSON.parse(localStorage.getItem("appDataV10")) || {windows:[], wsap:"", presets:[]};
-let currentWin = null;
-let currentPhotos = {};
+let data = JSON.parse(localStorage.getItem("REG_ULTRA_V3")) || {windows:[], wsap:"", presets:[]};
+let cur = null;
+let confirmAction = null;
 
-const save=()=>localStorage.setItem("appDataV10",JSON.stringify(data));
+const save = () => {
+    if(document.getElementById("ws")) data.wsap = document.getElementById("ws").value;
+    localStorage.setItem("REG_ULTRA_V3", JSON.stringify(data));
+};
 
-function notify(msg) {
-  const t = document.getElementById("toast"); t.innerText = msg;
-  t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 2000);
+function notify(msg, type = "success") {
+  const t = document.getElementById("toast");
+  t.innerText = msg;
+  t.className = "t-" + type + " show";
+  setTimeout(() => t.classList.remove("show"), 2500);
 }
 
-function customConfirm(msg, onOk) {
-    const modal = document.getElementById("customConfirm");
-    document.getElementById("confirmMsg").innerText = msg;
-    modal.style.display = "flex";
-    document.getElementById("confirmOk").onclick = () => { modal.style.display = "none"; onOk(); };
-    document.getElementById("confirmCancel").onclick = () => { modal.style.display = "none"; };
+// [NUEVA FUNCIÓN: IMAGE_HANDLER] - INICIO
+function handleImage(input, previewId) {
+  const file = input.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const preview = document.getElementById(previewId);
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      notify('Foto lista');
+    }
+    reader.readAsDataURL(file);
+  }
+}
+// [NUEVA FUNCIÓN] - FIN
+
+function askDelete(type) {
+  confirmAction = type;
+  const modal = document.getElementById("confirmModal");
+  const text = document.getElementById("confirmText");
+  text.innerText = type === 'window' ? "¿Deseas eliminar esta ventana?" : "¿Deseas borrar los datos escritos?";
+  modal.style.display = "flex";
 }
 
-function switchTab(tId, b) {
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
-  document.getElementById(tId).classList.add('active'); b.classList.add('active');
-  if(tId === 'tab-fields') refreshCurrentFieldsList();
+function closeConfirm(verified) {
+  document.getElementById("confirmModal").style.display = "none";
+  if(!verified) return;
+
+  if(confirmAction === 'window') {
+    data.windows.splice(vD.value, 1);
+    save(); refresh(); render();
+    notify("Eliminado", "danger");
+  } else if(confirmAction === 'clear') {
+    document.querySelectorAll("#fFields input:not([disabled])").forEach(i => i.value = "");
+    notify("Limpio", "warning");
+  }
 }
 
-function refreshSelectors(){
-  const options = data.windows.map((w,i)=>`<option value="${i}">${w.icon} ${w.name}</option>`).join("");
-  fieldWin.innerHTML = options;
-  delWinSelect.innerHTML = options;
-  preSelect.innerHTML = `<option value="">-- Seleccionar --</option>` + data.presets.map((p,i)=>`<option value="${i}">${p.icon} ${p.name}</option>`).join("");
-  preList.innerHTML = data.presets.map((p,i)=>`
-    <div class="list-item"><span>${p.icon} ${p.name}</span><button onclick="deletePreset(${i})" style="background:none; border:none; color:var(--danger); font-weight:bold; cursor:pointer">✕</button></div>
-  `).join("") || "<small style='color:#666'>Biblioteca vacía</small>";
+function tab(id, btn) {
+  document.querySelectorAll('.t-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).style.display = 'block';
+  btn.classList.add('active');
+  if(id === 't-link') listF();
 }
 
-function refreshCurrentFieldsList() {
-    const winIdx = fieldWin.value;
-    const container = document.getElementById("currentFieldsList");
-    if(!data.windows[winIdx]) { container.innerHTML = ""; return; }
-    container.innerHTML = data.windows[winIdx].fields.map((f, i) => `
-      <div class="list-item">
-        <span>${f.icon} ${f.name}</span>
-        <button onclick="removeField(${winIdx}, ${i})" style="background:rgba(211,47,47,0.1); border:1px solid var(--danger); color:var(--danger); border-radius:6px; padding:2px 8px; font-size:10px; cursor:pointer">QUITAR</button>
-      </div>
-    `).join("") || "<small style='color:#666'>Sin campos vinculados</small>";
+function refresh() {
+  const opt = data.windows.map((w,i)=>`<option value="${i}">${w.icon} ${w.name}</option>`).join("");
+  lW.innerHTML = opt; vD.innerHTML = opt;
+  lP.innerHTML = `<option value="">-- Elige un campo --</option>` + data.presets.map((p,i)=>`<option value="${i}">${p.name}</option>`).join("");
+  
+  pList.innerHTML = data.presets.map((p,i)=>`
+    <div class="list-item">
+        <div style="display:flex; flex-direction:column">
+            <span style="font-weight:bold">${p.name}</span>
+            <span style="font-size:10px; color:var(--primary)">${p.type.toUpperCase()}</span>
+        </div>
+        <button onclick="data.presets.splice(${i},1);save();refresh()" style="color:var(--danger); background:none; border:none; font-weight:bold">✕</button>
+    </div>`).join("");
 }
 
-function addWindow(){
-  if(!vName.value) return;
-  data.windows.push({name:vName.value, icon:vIcon.value||'📁', fields:[]});
-  vName.value=""; vIcon.value=""; save(); refreshSelectors(); render(); notify("Ventana creada");
+function listF() {
+    const idx = lW.value;
+    if(!data.windows[idx]) return;
+    fList.innerHTML = data.windows[idx].fields.map((f, i) => `<div class="list-item"><span>${f.name}</span><button onclick="data.windows[${idx}].fields.splice(${i},1);save();listF()" style="color:var(--danger); background:none; border:none; font-size:10px">REMOVER</button></div>`).join("");
 }
 
-function askDeleteWindow() {
-    const idx = delWinSelect.value;
-    if (idx === "" || !data.windows[idx]) return;
-    customConfirm(`¿Eliminar ventana "${data.windows[idx].name}"?`, () => {
-        data.windows.splice(idx, 1);
-        save(); refreshSelectors(); render(); notify("Eliminado con éxito");
-    });
+function addW(){
+  if(!vN.value) return notify("Ingresa nombre", "warning");
+  data.windows.push({name:vN.value, icon:vI.value||'📁', fields:[]});
+  vN.value=""; vI.value=""; save(); refresh(); render(); notify("Ventana creada");
 }
 
-function addPreField(){
-  if(!pName.value) return;
-  data.presets.push({ name: pName.value, icon: pIcon.value||"🔹", type: pType.value, opt: pOpt.value, cam: pCam.checked });
-  pName.value=""; pIcon.value=""; pOpt.value=""; pCam.checked=false;
-  save(); refreshSelectors(); notify("Campo guardado");
+function addP(){
+  if(!pN.value) return notify("Ingresa nombre", "warning");
+  data.presets.push({ name: pN.value, type: pT.value, opt: pO.value });
+  pN.value=""; pO.value=""; save(); refresh(); notify("Guardado");
 }
 
-function deletePreset(i){ data.presets.splice(i,1); save(); refreshSelectors(); notify("Eliminado"); }
-
-function linkPresetToWindow(){
-  const winIdx = fieldWin.value; const preIdx = preSelect.value;
-  if(winIdx === "" || preIdx === "") return;
-  data.windows[winIdx].fields.push({...data.presets[preIdx]});
-  save(); refreshCurrentFieldsList(); notify("Campo vinculado");
+function link(){
+  if(lW.value==="" || lP.value==="") return notify("Selecciona ventana y campo", "warning");
+  data.windows[lW.value].fields.push({...data.presets[lP.value]});
+  save(); listF(); notify("Campo vinculado");
 }
-
-function removeField(wI, fI){ data.windows[wI].fields.splice(fI,1); save(); refreshCurrentFieldsList(); notify("Quitado"); }
 
 function render(){
   main.innerHTML="";
   data.windows.forEach((w,i)=>{
     let d=document.createElement("div"); d.className="card";
-    d.innerHTML=`<div style="font-size:35px">${w.icon}</div><div style="margin-top:10px; font-weight:600; font-size:14px">${w.name}</div>`;
-    d.onclick=()=>openForm(i); main.appendChild(d);
+    d.innerHTML=`<div style="font-size:40px">${w.icon}</div><div style="margin-top:12px; font-weight:900; font-size:13px">${w.name.toUpperCase()}</div>`;
+    d.onclick=()=>openF(i); main.appendChild(d);
   });
 }
 
-function openConfig(){ wsap.value=data.wsap||""; refreshSelectors(); configModal.style.display="flex"; }
-function closeConfig(){ data.wsap=wsap.value; save(); render(); configModal.style.display="none"; }
+function openConfig(){ ws.value=data.wsap||""; refresh(); configModal.style.display="flex"; }
+function closeConfig(){ data.wsap=ws.value; save(); configModal.style.display="none"; }
 
-function openForm(i){
-  currentWin=i; currentPhotos={}; let w=data.windows[i]; formTitle.innerText=w.icon+" "+w.name; formFields.innerHTML="";
+function openF(i){
+  cur=i; let w=data.windows[i]; fTitle.innerText=w.icon+" "+w.name; fFields.innerHTML="";
+  
+  const now = new Date();
+  const timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
   w.fields.forEach((f,idx)=>{
-    let d=document.createElement("div"); d.style.marginBottom="15px";
-    d.innerHTML=`<label style="font-size:11px; color:#888; display:block; margin-bottom:5px">${f.icon} ${f.name}</label>`;
-    if(f.type==="auto"){
-        const now = new Date();
-        const fStr = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} - ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-        d.innerHTML+=`<input data-i="${idx}" value="${fStr}" disabled>`;
-    } 
-    else if(f.opt) d.innerHTML+=`<select data-i="${idx}">${f.opt.split("|").map(o=>`<option>${o}</option>`).join("")}</select>`;
-    else d.innerHTML+=`<input data-i="${idx}" type="${f.type==='number'?'number':'text'}" placeholder="...">`;
-    
-    if(f.cam){
-      let fi=document.createElement("input"); fi.type="file"; fi.accept="image/*"; fi.capture="environment"; fi.style.display="none";
-      let cb=document.createElement("button"); cb.className="action-btn"; cb.style.background="#2d3442"; cb.innerHTML="📸 Tomar Foto";
-      cb.onclick=()=>fi.click();
-      fi.onchange=(e)=>{
-        let file = e.target.files[0];
-        if(file){
-            currentPhotos[idx] = file;
-            let old=d.querySelector("img"); if(old) old.remove();
-            let img=document.createElement("img"); img.src=URL.createObjectURL(file);
-            img.style.width="100%"; img.style.borderRadius="12px"; img.style.marginTop="10px"; fi.after(img);
-            notify("Foto capturada");
-        }
-      };
-      d.appendChild(fi); d.appendChild(cb);
+    let d=document.createElement("div");
+    d.innerHTML=`<label>${f.name}</label>`;
+    if(f.type==="auto") d.innerHTML+=`<input data-i="${idx}" value="${timeStr}" disabled style="opacity:0.7; background:rgba(25,118,210,0.1) !important">`;
+    else if(f.type==="photo") {
+        const pId = `pv_${idx}`;
+        d.innerHTML+=`<img id="${pId}" class="img-preview"><button class="action-btn" style="background:#444; margin-bottom:15px" onclick="this.nextElementSibling.click()">📸 Cámara</button><input type="file" accept="image/*" capture="environment" style="display:none" onchange="handleImage(this, '${pId}')">`;
     }
-    formFields.appendChild(d);
+    else if(f.opt) d.innerHTML+=`<select data-i="${idx}">${f.opt.split("|").map(o=>`<option value="${o}">${o}</option>`).join("")}</select>`;
+    else d.innerHTML+=`<input data-i="${idx}" type="${f.type==='number'?'number':'text'}" placeholder="Escribir...">`;
+    fFields.appendChild(d);
   });
   formModal.style.display="flex";
 }
 
-async function sendWhats(){
-  let w=data.windows[currentWin]; 
+function send(){
+  if(!data.wsap) return notify("Configura WhatsApp", "warning");
+  let w=data.windows[cur]; 
   let msg=`*${w.icon} ${w.name.toUpperCase()}*\n─────────────────\n`;
-  document.querySelectorAll("#formFields input,select").forEach(e=>{ 
-    if(e.dataset.i!==undefined) {
-        const fieldData = w.fields[e.dataset.i];
-        msg+=`• *${fieldData.icon} ${fieldData.name}:* ${e.value}\n`; 
-    }
+  document.querySelectorAll("#fFields [data-i]").forEach(e=>{ 
+    msg+=`• *${data.windows[cur].fields[e.dataset.i].name}:* ${e.value}\n`; 
   });
-
-  if(Object.keys(currentPhotos).length > 0) msg += `\n📌 _(Adjunta la foto capturada)_`;
-
-  try { await navigator.clipboard.writeText(msg); } catch(err) {}
   window.open(`https://wa.me/${data.wsap}?text=`+encodeURIComponent(msg));
 }
 
-function clearForm(){ 
-    document.querySelectorAll("#formFields input").forEach(i=>!i.disabled&&(i.value="")); 
-    document.querySelectorAll("#formFields img").forEach(i=>i.remove());
-    currentPhotos = {};
-}
 function closeForm(){ formModal.style.display="none"; }
-
-window.addEventListener('load', () => {
-  setTimeout(() => { document.getElementById('splash').style.opacity = '0'; setTimeout(() => document.getElementById('splash').remove(), 500); }, 1500);
-});
-render();
+window.onload = render;
 </script>
 </body>
 </html>
